@@ -1,7 +1,6 @@
 import express from 'express'
 import Logging from './libraries/Logging'
 import authorRoutes from './routes/Author'
-import bookRoutes from './routes/Book'
 
 const app = express()
 
@@ -35,15 +34,14 @@ app.use((req, res, next) => {
 })
 
 /** Routes */
-app.use('/authors', authorRoutes)
-app.use('/books', bookRoutes)
+app.use(authorRoutes)
 
 /** Healthcheck */
 app.get('/ping', (req, res, next) => res.status(200).json({ hello: 'world' }))
 
 /** Error handling */
 app.use((req, res, next) => {
-    const error = new Error('Not found')
+    const error = new Error('cay thế nhờ')
 
     Logging.error(error)
 
