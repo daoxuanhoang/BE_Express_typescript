@@ -1,7 +1,8 @@
 import Joi, { ObjectSchema } from 'joi'
 import { NextFunction, Request, Response } from 'express'
-import { IAuthor } from '../models/Author'
+import { IUser } from '../models/users'
 import Logging from '../libraries/Logging'
+import { IUserToken } from 'models/user-tokens'
 
 export const ValidateJoi = (schema: ObjectSchema) => {
     return async (req: Request, res: Response, next: NextFunction) => {
@@ -19,13 +20,15 @@ export const ValidateJoi = (schema: ObjectSchema) => {
 
 export const Schemas = {
     author: {
-        create: Joi.object<IAuthor>({
-            name: Joi.string().required()
+        create: Joi.object<IUser>({
+            name: Joi.string().required(),
+            avatar: Joi.string().required()
         }),
-        update: Joi.object<IAuthor>({
+        update: Joi.object<IUser>({
             name: Joi.string().required()
         })
-    }
+    },
+    customer: {}
     // book: {
     //     create: Joi.object<IBook>({
     //         author: Joi.string()

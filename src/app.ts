@@ -1,6 +1,7 @@
 import express from 'express'
 import Logging from './libraries/Logging'
 import authorRoutes from './routes/Author'
+import customerRoutes from './routes/Customer'
 
 const app = express()
 
@@ -35,6 +36,7 @@ app.use((req, res, next) => {
 
 /** Routes */
 app.use(authorRoutes)
+app.use(customerRoutes)
 
 /** Healthcheck */
 app.get('/ping', (req, res, next) => res.status(200).json({ hello: 'world' }))

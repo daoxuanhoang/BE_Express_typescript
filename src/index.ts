@@ -4,6 +4,7 @@ import { config } from './config/config'
 import Logging from './libraries/Logging'
 
 /** Connect to Mongo */
+mongoose.set('strictQuery', false)
 mongoose
     .connect(config.mongoUrl, { retryWrites: true, w: 'majority' })
     .then(() => {
