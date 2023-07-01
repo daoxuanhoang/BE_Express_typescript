@@ -2,12 +2,12 @@ import { NextFunction, Request, Response } from 'express'
 import mongoose from 'mongoose'
 import { validateInputString } from '../services/validate'
 import { UserProvider } from './../models/user-providers'
-import jwt, { JwtPayload } from 'jsonwebtoken'
-import CryptoJS from 'crypto-js'
+import jwt from 'jsonwebtoken'
 import _ from 'lodash'
 import UserTokens from '../models/user-tokens'
 import User from '../models/users'
 import { getPaginationParams } from '../utils/constants'
+import { Password } from '../services/password'
 
 const createAuth = (req: Request, res: Response, next: NextFunction) => {
     const { author, title } = req.body
@@ -61,7 +61,7 @@ const getUser = async (req: Request, res: Response, next: NextFunction) => {
             } as any
         })
 
-    res.status(200).send({ data, page, perPage, total, s })
+    res.status(200).send({ data, page, perPage, total, search: s })
 }
 
 const updateUser = (req: Request, res: Response, next: NextFunction) => {
@@ -96,15 +96,20 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     const { value, type } = validateInputString(email)
 
     if (!type || email?.length < 8) {
-        return res.status(400).send({ errors: [{ field: 'email', message: 'Email/Phone must be valid ', code: 'error_email_phone' }] })
+        return res.status(200).send({ success: false, data: null, message: 'Email/Phone must be valid', errors: [{ field: 'email', message: 'Email/Phone must be valid ', code: 'error_email_phone' }] })
     }
     if (password.length < 4) {
-        return res.status(400).send({ errors: [{ field: 'password', message: 'Invalid password', code: 'password_invalid' }] })
+        return res.status(200).send({ success: false, data: null, message: 'Invalid password', errors: [{ field: 'password', message: 'Invalid password', code: 'password_invalid' }] })
     }
     const existingUser = await UserProvider.findOne({ uId: value, type: type })
 
     if (!existingUser) {
-        return res.status(400).send({ errors: [{ field: email, message: 'Invalid email', code: 'email_invalid' }] })
+        return res.status(200).send({ success: false, data: null, message: 'Invalid email', errors: [{ field: email, message: 'Invalid email', code: 'email_invalid' }] })
+    }
+
+    const passwordMatch = Password.compare(existingUser.password, password)
+    if (!passwordMatch) {
+        return res.status(200).send({ success: false, data: null, message: 'Invalid credentials', errors: [{ field: 'password', message: 'Invalid credentials', code: 'password_not_match' }] })
     }
 
     const user = await User.findOne({ id: existingUser.userId }).select('id name avatar birthday email phone gender status')
@@ -123,15 +128,15 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 
     const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '24h' })
 
-    res.cookie('user', user, { httpOnly: true, secure: true, maxAge: 31536000000 }).cookie('accessToken', accessToken, {
-        httpOnly: false,
-        secure: false,
-        maxAge: 31536000000
-    })
+    // res.cookie('user', payload, { httpOnly: true, secure: true, maxAge: 31536000000 }).cookie('accessToken', accessToken, {
+    //     httpOnly: false,
+    //     secure: false,
+    //     maxAge: 31536000000
+    // })
 
     await UserTokens.create({ userId: user?.id, token: accessToken, data: { ip: req.ip, agent: req.headers['user-agent'] } })
 
-    res.status(200).send({ accessToken, user })
+    res.status(200).send({ accessToken, data: user, success: true, message: 'Đăng nhập thành công!' })
 }
 
 export default { createAuth, getUser, getUserId, updateUser, deleteUser, login }
