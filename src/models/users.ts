@@ -11,7 +11,7 @@ export interface IUser {
     gender: string
 }
 
-export interface IUserModel extends IUser, Document {}
+export interface IUserModel extends IUser, Document { }
 
 const UserSchema: Schema = new Schema(
     {
@@ -19,6 +19,7 @@ const UserSchema: Schema = new Schema(
         name: { type: String, required: true, default: null },
         avatar: { type: String, required: true, default: null },
         email: { type: String, required: true, default: null },
+        phone: { type: Number, required: true, default: null },
         birthday: { type: Date, default: new Date() },
         gender: { type: String, default: 'male', enum: ['male', 'female', 'other'] },
         status: { type: String, default: 1, enum: [1, 0] }

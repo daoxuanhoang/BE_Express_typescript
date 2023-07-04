@@ -2,6 +2,7 @@ import express from 'express'
 import Logging from './libraries/Logging'
 import authorRoutes from './routes/Author'
 import customerRoutes from './routes/Customer'
+import fileRoutes from './routes/File'
 
 const app = express()
 
@@ -37,13 +38,14 @@ app.use((req, res, next) => {
 /** Routes */
 app.use(authorRoutes)
 app.use(customerRoutes)
+app.use(fileRoutes)
 
 /** Healthcheck */
 app.get('/ping', (req, res, next) => res.status(200).json({ hello: 'world' }))
 
 /** Error handling */
 app.use((req, res, next) => {
-    const error = new Error('cay thế nhờ')
+    const error = new Error('something went wrong!')
 
     Logging.error(error)
 
