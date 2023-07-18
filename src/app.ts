@@ -1,8 +1,10 @@
 import express from 'express'
+import SwaggerUi from 'swagger-ui-express'
 import Logging from './libraries/Logging'
 import authorRoutes from './routes/Author'
 import customerRoutes from './routes/Customer'
 import fileRoutes from './routes/File'
+import swaggerDocs from './utils/swagger'
 
 const app = express()
 
@@ -34,6 +36,8 @@ app.use((req, res, next) => {
 
     next()
 })
+
+swaggerDocs(app)
 
 /** Routes */
 app.use(authorRoutes)

@@ -126,7 +126,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
         status: user?.status
     }
 
-    const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '24h' })
+    const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
 
     // res.cookie('user', payload, { httpOnly: true, secure: true, maxAge: 31536000000 }).cookie('accessToken', accessToken, {
     //     httpOnly: false,

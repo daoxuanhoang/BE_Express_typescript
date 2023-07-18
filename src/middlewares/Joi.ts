@@ -3,12 +3,12 @@ import { NextFunction, Request, Response } from 'express'
 import { IUser } from '../models/users'
 import Logging from '../libraries/Logging'
 import { IUserToken } from 'models/user-tokens'
+import { ILogin } from 'utils/constants'
 
 export const ValidateJoi = (schema: ObjectSchema) => {
     return async (req: Request, res: Response, next: NextFunction) => {
         try {
             await schema.validateAsync(req.body)
-
             next()
         } catch (error) {
             Logging.error(error)
@@ -26,6 +26,10 @@ export const Schemas = {
         }),
         update: Joi.object<IUser>({
             name: Joi.string().required()
+        }),
+        login: Joi.object<ILogin>({
+            email: Joi.string().required(),
+            password: Joi.string().required()
         })
     },
     customer: {}

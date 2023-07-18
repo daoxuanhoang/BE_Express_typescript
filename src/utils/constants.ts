@@ -4,3 +4,8 @@ export const getPaginationParams = (page, perPage) => {
     const skip = perPage * page - perPage
     return { limit: perPage, skip }
 }
+
+export interface ILogin {
+    email: string,
+    password: string
+}
