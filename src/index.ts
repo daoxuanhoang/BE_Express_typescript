@@ -1,4 +1,4 @@
-import app from './app'
+import { app, server } from './app'
 import mongoose from 'mongoose'
 import { config } from './config/config'
 import Logging from './libraries/Logging'
@@ -27,7 +27,7 @@ const StartServer = async () => {
         Logging.success('Mongo connected successfully.')
 
         Logging.info('Server has started!!!')
-        app.listen(config.server.port, () => Logging.success(`Server is running on port ${config.server.port}`))
+        server.listen(config.server.port, () => Logging.success(`Server is running on port ${config.server.port}`))
     } catch (error) {
         Logging.error(error)
     }

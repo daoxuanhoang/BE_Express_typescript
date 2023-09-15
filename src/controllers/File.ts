@@ -141,7 +141,7 @@ const deleteFile = async (req: any, res: Response, next: NextFunction) => {
                 return res.status(404).send({
                     success: false,
                     data: null,
-                    message: "User not found with id " + id
+                    message: "File not found with id " + id
                 });
             }
             return res.status(201).send({ message: "success", success: true, data: null })

@@ -112,18 +112,20 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
         return res.status(200).send({ success: false, data: null, message: 'Invalid credentials', errors: [{ field: 'password', message: 'Invalid credentials', code: 'password_not_match' }] })
     }
 
-    const user = await User.findOne({ id: existingUser.userId }).select('id name avatar birthday email phone gender status')
+    const user = await User.findOne({ _id: existingUser.userId }).select('_id name avatar birthday email phone gender status lang')
+
 
     // Generate JWT
     const payload = {
-        id: user?.id,
+        id: user?._id,
         name: user?.name,
         avatar: user?.avatar,
         birthday: user?.birthday,
         email: user?.email,
         phone: user?.phone,
         gender: user?.gender,
-        status: user?.status
+        status: user?.status,
+        lang: user?.lang
     }
 
     const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
