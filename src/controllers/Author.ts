@@ -136,7 +136,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 
     await UserTokens.create({ userId: user?.id, token: accessToken, data: { ip: req.ip, agent: req.headers['user-agent'] } })
 
-    res.status(200).send({ accessToken, data: user, success: true, message: 'Đăng nhập thành công!' })
+    res.status(200).send({ data: { accessToken, data: user }, success: true, message: 'Đăng nhập thành công!' })
 }
 
 export default { createAuth, getUser, getUserId, updateUser, deleteUser, login }

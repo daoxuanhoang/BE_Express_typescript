@@ -4,7 +4,7 @@ export interface IFile {
     id: string,
     uploadDate: Date,
     filename: string,
-    // contentType: any,
+    // contentType?: string,
     chunkSize: number,
     length: number
 }
@@ -24,6 +24,6 @@ const FilesSchema = new mongoose.Schema(
 FilesSchema.clearIndexes()
 FilesSchema.index({ filename: 'text' })
 
-const Files = mongoose.model<IFile>('fs.files', FilesSchema)
+const Files = mongoose.model<IFile>('photos.files', FilesSchema)
 
 export { Files }

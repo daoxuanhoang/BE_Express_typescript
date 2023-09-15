@@ -78,5 +78,7 @@ const router = express.Router()
  */
 router.get('/api/v1/files', verifyToken, controller.getFiles)
 router.post('/api/v1/uploadFiles', verifyToken, controller.uploadFiles)
+router.get("/api/v1/files/:name", controller.download);
+router.delete("/api/v1/files/:id", verifyToken, controller.deleteFile);
 
 export default router

@@ -8,21 +8,17 @@ const storage = new GridFsStorage({
     url: config.mongoUrl,
     options: { useNewUrlParser: true, useUnifiedTopology: true, },
     file: (req, file) => {
-        console.log('file', file);
-        console.log('req', req);
 
-        const match = ["application/xml", "text/xml"];
-
-
-        if (match.indexOf(file.mimetype) === -1) {
-            const filename = `${Date.now()}-bezkoder-${file.originalname}`;
-            return filename;
+        if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+            return {
+                bucketName: "photos",
+                filename: `${Date.now()}_${file.originalname.toLowerCase().split(' ').join('_')}`,
+            }
+        } else {
+            //Otherwise save to default bucket
+            return `${Date.now()}_${file.originalname.toLowerCase().split(' ').join('_')
+                }`
         }
-
-        return {
-            id: new mongoose.Types.ObjectId(),
-            filename: `${Date.now()}-bezkoder-${file.originalname}`
-        };
     }
 
 });

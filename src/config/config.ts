@@ -6,7 +6,8 @@ const SERVER_PORT = process.env.SERVER_PORT ? Number(process.env.SERVER_PORT) : 
 
 export const config = {
     mongoUrl: process.env.MONGO_URL || '',
+    imgBucket: "photos",
     server: {
-        port: SERVER_PORT
+        port: SERVER_PORT,
     }
 }
