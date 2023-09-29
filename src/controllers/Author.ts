@@ -25,9 +25,9 @@ const createAuth = (req: Request, res: Response, next: NextFunction) => {
 }
 
 const getUserId = (req: Request, res: Response, next: NextFunction) => {
-    const userId = req.params.useId
+    const { _id } = req.params
 
-    return UserProvider.findById(userId)
+    return UserProvider.findById(_id)
         .populate('author')
         .then((user) => (user ? res.status(200).json({ user }) : res.status(404).json({ message: 'not found' })))
         .catch((error) => res.status(500).json({ error }))
@@ -64,23 +64,21 @@ const getUser = async (req: Request, res: Response, next: NextFunction) => {
     res.status(200).send({ data, page, perPage, total, search: s })
 }
 
-const updateUser = (req: Request, res: Response, next: NextFunction) => {
-    const authId = req.params.authId
-
-    return UserProvider.findById(authId)
+const updateAuth = (req: Request, res: Response, next: NextFunction) => {
+    const { _id } = req.params
+    return User.findOne({ _id: _id })
         .then((auth) => {
             if (auth) {
                 auth.set(req.body)
-
                 return auth
                     .save()
-                    .then((auth) => res.status(201).json({ auth }))
-                    .catch((error) => res.status(500).json({ error }))
+                    .then((auth) => res.status(201).send({ message: "Success", success: true, data: auth }))
+                    .catch((error) => res.status(500).send({ message: error, success: false, data: null }))
             } else {
-                return res.status(404).json({ message: 'not found' })
+                return res.status(404).json({ message: 'not found', success: false, data: null })
             }
         })
-        .catch((error) => res.status(500).json({ error }))
+        .catch((error) => res.status(500).send({ message: error, success: false, data: null }))
 }
 
 const deleteUser = (req: Request, res: Response, next: NextFunction) => {
@@ -112,7 +110,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
         return res.status(200).send({ success: false, data: null, message: 'Invalid credentials', errors: [{ field: 'password', message: 'Invalid credentials', code: 'password_not_match' }] })
     }
 
-    const user = await User.findOne({ _id: existingUser.userId }).select('_id name avatar birthday email phone gender status lang')
+    const user = await User.findOne({ _id: existingUser.userId }).select('_id name avatar birthday email phone gender status lang mode')
 
 
     // Generate JWT
@@ -125,7 +123,8 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
         phone: user?.phone,
         gender: user?.gender,
         status: user?.status,
-        lang: user?.lang
+        lang: user?.lang,
+        mode: user?.mode
     }
 
     const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
@@ -141,4 +140,4 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     res.status(200).send({ data: { accessToken, data: user }, success: true, message: 'Đăng nhập thành công!' })
 }
 
-export default { createAuth, getUser, getUserId, updateUser, deleteUser, login }
+export default { createAuth, getUser, getUserId, updateAuth, deleteUser, login }

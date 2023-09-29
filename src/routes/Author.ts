@@ -83,7 +83,7 @@ router.post('/api/v1/users/create', ValidateJoi(Schemas.author.create), controll
  */
 router.post('/api/v1/login', validation, ValidateJoi(Schemas.author.login), controller.login)
 router.get('/api/v1/users', verifyToken, controller.getUser)
-// router.patch('/update/:authId', ValidateJoi(Schemas.author.update), controller.updateAuth)
+router.put('/api/v1/update/:_id', verifyToken, controller.updateAuth)
 // router.delete('/api/v1/:authId', controller.deleteAuth)
 
 

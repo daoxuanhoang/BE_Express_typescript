@@ -9,7 +9,8 @@ export interface IUser {
     birthday: string
     avatar: string
     gender: string,
-    lang: string
+    lang: string,
+    mode: string
 }
 
 export interface IUserModel extends IUser, Document { }
@@ -24,6 +25,7 @@ const UserSchema: Schema = new Schema(
         gender: { type: String, default: 'male', enum: ['male', 'female', 'other'] },
         status: { type: String, default: 1, enum: [1, 0] },
         lang: { type: String, default: 'vi', enum: ['vi', 'en'] },
+        mode: { type: String, default: "light", enum: ["light", "dark"] }
     },
     {
         timestamps: true,

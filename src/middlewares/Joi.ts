@@ -25,26 +25,18 @@ export const Schemas = {
             avatar: Joi.string().required()
         }),
         update: Joi.object<IUser>({
-            name: Joi.string().required()
+            name: Joi.string().required(),
+            avatar: Joi.string().required(),
+            lang: Joi.string().required(),
+            birthday: Joi.date().required(),
+            email: Joi.string().required(),
+            gender: Joi.string().required(),
+            phone: Joi.number().required(),
+            status: Joi.number().required(),
         }),
         login: Joi.object<ILogin>({
             email: Joi.string().required(),
             password: Joi.string().required()
         })
     },
-    customer: {}
-    // book: {
-    //     create: Joi.object<IBook>({
-    //         author: Joi.string()
-    //             .regex(/^[0-9a-fA-F]{24}$/)
-    //             .required(),
-    //         title: Joi.string().required()
-    //     }),
-    //     update: Joi.object<IBook>({
-    //         author: Joi.string()
-    //             .regex(/^[0-9a-fA-F]{24}$/)
-    //             .required(),
-    //         title: Joi.string().required()
-    //     })
-    // }
 }
