@@ -1,7 +1,6 @@
 import express from 'express'
 import Logging from './libraries/Logging'
 import authorRoutes from './routes/Author'
-import customerRoutes from './routes/Customer'
 import fileRoutes from './routes/File'
 import swaggerDocs from './utils/swagger'
 import { Server } from 'socket.io'
@@ -97,7 +96,6 @@ swaggerDocs(app)
 
 /** Routes */
 app.use(authorRoutes)
-app.use(customerRoutes)
 app.use(fileRoutes)
 
 /** Healthcheck */

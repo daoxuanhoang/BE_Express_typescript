@@ -24,13 +24,27 @@ const createAuth = (req: Request, res: Response, next: NextFunction) => {
         .catch((error) => res.status(500).json({ error }))
 }
 
-const getUserId = (req: Request, res: Response, next: NextFunction) => {
-    const { _id } = req.params
+const getUserId = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { _id } = req.params
 
-    return UserProvider.findById(_id)
-        .populate('author')
-        .then((user) => (user ? res.status(200).json({ user }) : res.status(404).json({ message: 'not found' })))
-        .catch((error) => res.status(500).json({ error }))
+        await User.findOne({ _id: _id }).then(data => {
+            if (!data) {
+                return res.status(404).send({
+                    success: false,
+                    data: null,
+                    message: "user not found with id " + _id
+                });
+            }
+            return res.status(200).send({ message: "success", success: true, data })
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            message: "Error Something went wrong",
+            error,
+        })
+    }
 }
 
 const getUser = async (req: Request, res: Response, next: NextFunction) => {

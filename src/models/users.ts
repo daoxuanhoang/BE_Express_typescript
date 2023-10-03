@@ -7,7 +7,8 @@ export interface IUser {
     email: string
     status: string
     birthday: string
-    avatar: string
+    avatar: string,
+    cover: string,
     gender: string,
     lang: string,
     mode: string
@@ -19,6 +20,7 @@ const UserSchema: Schema = new Schema(
     {
         name: { type: String, required: true, default: null },
         avatar: { type: String, required: true, default: null },
+        cover: { type: String, required: true, default: null },
         email: { type: String, required: true, default: null },
         phone: { type: Number, required: true, default: null },
         birthday: { type: Date, default: new Date() },
