@@ -2,6 +2,7 @@ import express from 'express'
 import Logging from './libraries/Logging'
 import authorRoutes from './routes/Author'
 import fileRoutes from './routes/File'
+import postRoutes from "./routes/Post"
 import swaggerDocs from './utils/swagger'
 import { Server } from 'socket.io'
 import { createServer } from 'node:http'
@@ -97,6 +98,7 @@ swaggerDocs(app)
 /** Routes */
 app.use(authorRoutes)
 app.use(fileRoutes)
+app.use(postRoutes)
 
 /** Healthcheck */
 app.get('/ping', (req, res, next) => res.status(200).json({ hello: 'world' }))

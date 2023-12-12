@@ -5,7 +5,7 @@ import { UserProvider } from './../models/user-providers'
 import jwt from 'jsonwebtoken'
 import _ from 'lodash'
 import UserTokens from '../models/user-tokens'
-import User from '../models/users'
+import { Users } from '../models/users'
 import { getPaginationParams } from '../utils/constants'
 import { Password } from '../services/password'
 
@@ -28,7 +28,7 @@ const getUserId = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { _id } = req.params
 
-        await User.findOne({ _id: _id }).then(data => {
+        await Users.findOne({ _id: _id }).then(data => {
             if (!data) {
                 return res.status(404).send({
                     success: false,
@@ -54,8 +54,8 @@ const getUser = async (req: Request, res: Response, next: NextFunction) => {
     const sort: Record<string, any> = { score: { $meta: 'textScore' } }
 
     if (!search || !value) {
-        const data = await User.aggregate([{ $skip: skip }, { $limit: limit }])
-        const [{ total }] = await User.aggregate([{ $count: 'total' }])
+        const data = await Users.aggregate([{ $skip: skip }, { $limit: limit }])
+        const [{ total }] = await Users.aggregate([{ $count: 'total' }])
         return res.status(200).send({ data, page, perPage, total, search })
     }
 
@@ -63,7 +63,7 @@ const getUser = async (req: Request, res: Response, next: NextFunction) => {
     const s = type === 'EMAIL' ? value.replace(/(@.+.com)$/, '') : value
     const match = { $text: { $search: decodeURIComponent(search as string) } }
 
-    const [{ data, total }] = await User.aggregate()
+    const [{ data, total }] = await Users.aggregate()
         .match(match)
         .facet({
             data: [{ $sort: sort }, { $skip: skip }, { $limit: limit }, { $project: { id: 1, name: 1, avatar: 1, email: 1, birthday: 1, phone: 1, gender: 1, status: 1 } }],
@@ -80,7 +80,8 @@ const getUser = async (req: Request, res: Response, next: NextFunction) => {
 
 const updateAuth = (req: Request, res: Response, next: NextFunction) => {
     const { _id } = req.params
-    return User.findOne({ _id: _id })
+
+    return Users.findById({ _id: _id })
         .then((auth) => {
             if (auth) {
                 auth.set(req.body)
@@ -124,8 +125,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
         return res.status(200).send({ success: false, data: null, message: 'Invalid credentials', errors: [{ field: 'password', message: 'Invalid credentials', code: 'password_not_match' }] })
     }
 
-    const user = await User.findOne({ _id: existingUser.userId }).select('_id name avatar birthday email phone gender status lang mode')
-
+    const user = await Users.findById({ _id: existingUser.userId }).select('_id name avatar birthday email phone gender status lang mode')
 
     // Generate JWT
     const payload = {

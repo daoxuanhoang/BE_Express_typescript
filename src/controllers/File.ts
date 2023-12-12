@@ -56,43 +56,43 @@ const getFiles = async (req: Request, res: Response, next: NextFunction) => {
     res.status(200).send({ message: "success", success: true, data: { result: fileInfos, page, perPage, total, search } })
 }
 
-const uploadFiles = async (req: any, res: Response, next: NextFunction) => {
+export const uploadFiles = async (req: any, res: Response, next: NextFunction) => {
     try {
         await uploadFilesMiddleware(req, res);
         if (req?.files?.length as any <= 0) {
             return res
                 .status(400)
-                .send({ message: "You must select at least 1 file." });
+                .send({ message: "Bạn phải chọn ít nhất 1 file." });
         }
 
-        return res.status(200).send({
-            message: "Files have been uploaded.",
-            success: true,
-            data: null
+        const baseUrl = "http://localhost:3001/api/v1/files/";
+        let fileInfos = <any[]>[];
+        await req?.files?.forEach((doc) => {
+            fileInfos.push({
+                id: doc._id,
+                name: doc.filename.toLowerCase().split(' ').join('_'),
+                url: baseUrl + doc.filename.toLowerCase().split(' ').join('_'),
+            });
         });
-        // if (req.file == undefined) {
-        //     return res.send({
-        //         message: "You must select a file.",
-        //     });
-        // }
-        // return res.send({
-        //     message: "File has been uploaded.",
-        // });
+
+
+        return res.status(200).send({
+            message: "Upload file thành công!",
+            success: true,
+            data: fileInfos
+        });
+
     } catch (error: any) {
         console.log(error);
 
         if (error.code === "LIMIT_UNEXPECTED_FILE") {
             return res.status(400).send({
-                message: "Too many files to upload.",
+                message: "Quá nhiều file được tải lên!",
             });
         }
         return res.status(500).send({
-            message: `Error when trying upload many files: ${error}`,
+            message: `Lỗi khi tải nhiều files lên: ${error}`,
         });
-
-        // return res.send({
-        //     message: "Error when trying upload image: ${error}",
-        // });
     }
 };
 
@@ -100,7 +100,7 @@ const download = async (req: any, res: Response, next: NextFunction) => {
 
     try {
         await mongoClient.connect()
-        const bucket = new GridFSBucket(mongoClient.db("Product"), { bucketName: config.imgBucket })
+        const bucket = new GridFSBucket(mongoClient.db("test"), { bucketName: config.imgBucket })
 
         let downloadStream = bucket.openDownloadStreamByName(
             req.params.name
@@ -155,5 +155,6 @@ const deleteFile = async (req: any, res: Response, next: NextFunction) => {
     }
 
 }
+
 
 export default { getFiles, uploadFiles, download, deleteFile }
